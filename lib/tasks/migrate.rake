@@ -7,6 +7,7 @@ require "motion_migrate/motion_generate/property"
 require "motion_migrate/motion_generate/relationship"
 require "motion_migrate/generate"
 require "motion_migrate/motion_generate/io"
+require "motion_migrate/schema"
 
 namespace :db do
   desc "Generate a version of the current database model as described in the models."

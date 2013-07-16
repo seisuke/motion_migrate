@@ -39,9 +39,9 @@ module MotionMigrate
       end
 
       it "should error on undiffened deletion rules for #{type}" do
-        lambda { MotionMigrate::Model.send(type, :field, :class_name => "Test", :inverse_of => "test", :deletion_rule => :unknown) }.should raise_error
-      end
-    end
+         lambda { MotionMigrate::Model.send(type, :field, :class_name => "Test", :inverse_of => "test", :deletion_rule => :unknown) }.should raise_error
+       end
+     end
 
     it "should return the correct options for belongs_to" do
       MotionMigrate::Model.belongs_to(:field, @allowed_options).should == @filled_allowed_attributes.merge({ :toMany => "NO", :name => :field, :minCount => 1, :maxCount => 1 })

@@ -9,23 +9,19 @@ module MotionMigrate
   class Generate
     class << self
       def build
-        models = Dir.glob("app/models/*.rb")
-        raise "! No models defined in 'app/models', add models to this folder if you want to generate the database model." if models.count == 0
-        
-        models.each do |filename|
-          File.open(filename) { |file| eval(file.read) }
-        end
+        # raise "! No models defined in 'app/models', add models to this folder if you want to generate the database model." if schema
+        schema = File.open("db/schema.rb") { |file| eval(file.read) }
 
         builder = Nokogiri::XML::Builder.new(:encoding => "UTF-8") do |xml|
           xml.model(database_model_attributes) do
-            ObjectSpace.each_object(Class).select { |klass| klass < MotionMigrate::Model }.each do |entity|
-              xml.entity(:name => entity.entity_name, :representedClassName => entity.entity_name, :syncable => "YES") do
-                entity.properties[entity.entity_name].each do |name, property|
-                  xml.attribute(property)
-                end unless entity.properties[entity.entity_name].nil?
-                entity.relationships[entity.entity_name].each do |name, relationship|
-                  xml.relationship(relationship)
-                end unless entity.relationships[entity.entity_name].nil?
+            schema.entities.each do |entity|
+              xml.entity(:name => entity.name, :representedClassName => entity.name, :syncable => "YES") do
+                entity.attributes.each do |attribute|
+                  xml.attribute(attribute.to_hash)
+                end
+                entity.relationships.each do |relationship|
+                  xml.relationship(relationship.to_hash)
+                end
               end
             end
           end
